@@ -51,54 +51,61 @@ def image_process(data_dir, batch_size, img_height, img_width, num_classes):
   return train_ds, val_ds, class_names
 
 # %%
-def create_model(num_classes, data_augmentation, img_height, img_width):
+def create_model(num_classes, data_augmentation, img_height, img_width, train_ds):
 
-  plt.figure(figsize=(10, 10))
-  for images, _ in train_ds.take(1):
-    for i in range(9):
-      augmented_images = data_augmentation(images)
-      ax = plt.subplot(3, 3, i + 1)
-      plt.imshow(augmented_images[0].numpy().astype("uint8"))
-      plt.axis("off")
-    plt.tight_layout()
-    plt.show()
+  # plt.figure(figsize=(10, 10))
 
+  # for images, _ in train_ds.take(2):
+  #   for i in range(6):
+  #     augmented_images = data_augmentation(images)
+  #     ax = plt.subplot(3, 2, i + 1)
+  #     plt.imshow(augmented_images[0].numpy().astype("uint8"))
+  #     plt.axis("off")
+  #   plt.tight_layout()
+  #   plt.show()
 
   model = Sequential([
-    data_augmentation,
-    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
+	    # data_augmentation,
+	    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
 
-    layers.Conv2D(32, 5, strides=2, padding='same', activation='relu'),
-    layers.MaxPooling2D(strides=2),
-    layers.Dropout(0.1),
+	    layers.Conv2D(32, 3, strides=2, padding='valid', activation='relu'),
+	    layers.MaxPooling2D(pool_size=(2, 2), strides=2),
+	    layers.Dropout(0.2),
 
-    layers.Conv2D(32, 5, padding='same', activation='relu'),
-    layers.MaxPooling2D(strides=2),
-    layers.Dropout(0.1),
+	    # layers.Conv2D(32, 5, padding='same', activation='relu'),
+	    # # layers.MaxPooling2D(strides=2),
+	    # layers.Dropout(0.1),
 
-    layers.Conv2D(32, 5, padding='same', activation='relu'),
-    layers.MaxPooling2D(strides=2),
-    layers.Dropout(0.1),
+	    layers.Conv2D(64, 3, padding='valid', activation='relu'),
+	    layers.MaxPooling2D(pool_size=(2, 2), strides=2),
+	    layers.Dropout(0.2),
 
-    layers.Conv2D(32, 5, padding='same', activation='relu'),
-    layers.MaxPooling2D(strides=2),
-    layers.Dropout(0.1),
+	    # layers.Conv2D(32, 5, padding='same', activation='relu'),
+	    # layers.MaxPooling2D(),
+	    # layers.Dropout(0.1),
 
-    layers.Flatten(),
-    layers.Dense(num_classes, activation='softmax'),
-  ])
+	    layers.Flatten(),
+	    layers.Dense(128, activation='relu'),
+	    layers.Dense(num_classes, activation='softmax')])
 
   model.compile(optimizer='adam',
-                loss='sparse_categorical_crossentropy',
-                metrics=['accuracy'])
+	                loss='sparse_categorical_crossentropy',
+	                metrics=['accuracy'])
+
   print(model.summary())
+
+
 
   return model
 
 def train_model(model, n_epochs, train_ds, val_ds):
-  history = model.fit(train_ds,
+  history = model.fit_generator(train_ds,
                       validation_data = val_ds,
-                      epochs=n_epochs)
+                      validation_steps=val_ds.n//val_ds.batch_size,
+                      epochs=n_epochs,
+                      steps_per_epoch=train_ds.n//train_ds.batch_size,
+                      use_multiprocessing=True,
+                      workers = -1)
 
   acc = history.history['accuracy']
 
@@ -161,27 +168,36 @@ if __name__ == '__main__':
   img_height = 299
   img_width = 299
   num_classes = 7
-  n_epochs = 10
+  n_epochs = 7
   data_dir = '../data'
+
+  train_generator, validation_generator = image_pipeline.main()
+
+  # train_ds, val_ds, class_names = image_process(data_dir, batch_size, img_height, img_width, num_classes)
 
   data_augmentation = keras.Sequential([
     layers.experimental.preprocessing.RandomFlip("horizontal",
                                                  input_shape=(img_height,
                                                               img_width,
                                                               3)),
-    # layers.experimental.preprocessing.RandomRotation(0.1),
-    layers.experimental.preprocessing.RandomZoom(0.2)
+    layers.experimental.preprocessing.RandomZoom(0.2),
+    layers.experimental.preprocessing.RandomWidth(0.2),
+    layers.experimental.preprocessing.RandomHeight(0.2),
   ])
 
-  train_ds, val_ds, class_names = image_process(data_dir, batch_size, img_height, img_width, num_classes)
+  model = create_model(num_classes, data_augmentation, img_height,
+                          img_width, train_generator)
 
-  model = create_model(num_classes, data_augmentation, img_height, img_width)
-
-  model = train_model(model, n_epochs, train_ds, val_ds)
-
+  model = train_model(model, n_epochs, train_generator, validation_generator)
 
 # %%
-# %%
-plot_home_weights(class_names, train_ds)
-# %%
-class_names
+# filename = '../models/cnn_sequential/train_model'
+# model.save(filename)
+# # %%
+# # %%
+# plot_home_weights(class_names, train_ds)
+# # %%
+# train_generator.image_shape
+
+# # %%
+# validation_generator.image_shape

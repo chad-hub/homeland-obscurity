@@ -1,5 +1,4 @@
 
-# %%
 from os.path import join
 import os
 
@@ -22,7 +21,7 @@ import numpy as np
 import pandas as pd
 import glob
 from PIL import Image
-# %%
+
 def image_data_generator(data_dir,
                        data_augment=False,
                        batch_size=32,
@@ -32,10 +31,10 @@ def image_data_generator(data_dir,
                        shuffle=True):
   if data_augment:
       datagen = ImageDataGenerator(rescale=1./255,
-                                   rotation_range=20,
+                                  #  rotation_range=5,
                                    width_shift_range=0.2,
                                    height_shift_range=0.2,
-                                   shear_range=0.2,
+                                  #  shear_range=0.2,
                                    zoom_range=0.2,
                                    validation_split=0.2,
                                    horizontal_flip=True)
@@ -43,19 +42,29 @@ def image_data_generator(data_dir,
       datagen = ImageDataGenerator(rescale=1./255)
 
   train_generator = datagen.flow_from_directory(data_dir,
-                                          target_size=(299,299,3),
+                                          target_size=target_size,
                                           color_mode='rgb',
                                           batch_size=32,
-                                          shuffle=0.2,
+                                          # shuffle=0.2,
                                           class_mode='categorical',
                                           subset='training')
   validation_generator = datagen.flow_from_directory(data_dir,
-                                          target_size=(299,299,3),
+                                          target_size=target_size,
                                           color_mode='rgb',
                                           batch_size=32,
-                                          shuffle=0.2,
+                                          # shuffle=0.2,
                                           class_mode='categorical',
                                           subset='validation')
+
+  # plt.figure(figsize=(10, 10))
+  # for images, _ in train_generator.take(1):
+  #   for i in range(9):
+  #     # augmented_images = data_augmentation(images)
+  #     ax = plt.subplot(3, 3, i + 1)
+  #     plt.imshow(images.numpy().astype("uint8"))
+  #     plt.axis("off")
+  #   plt.tight_layout()
+  #   plt.show()
 
   return train_generator, validation_generator
 
@@ -63,8 +72,6 @@ def main():
   train_generator, validation_generator = image_data_generator('../data',data_augment=True)
   return train_generator, validation_generator
 
-# %%
 if __name__ == '__main__':
   train_generator, validation_generator = main()
 
-# %%
