@@ -1,4 +1,3 @@
-# %%
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -15,7 +14,8 @@ matplotlib.style.use('ggplot')
 
 import image_pipeline
 import pickle
-# %%
+
+
 def add_new_last_layer(base_model, nb_classes=7):
     """Add last layer to the convnet
     Args:
@@ -29,13 +29,12 @@ def add_new_last_layer(base_model, nb_classes=7):
     # Convert final MxNxC tensor output into a 1xC tensor where C is the # of channels.
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(4096, activation='relu')(x)
-    x = keras.layers.Dropout(.5)(x)
+    x = keras.layers.Dropout(.25)(x)
     predictions = keras.layers.Dense(7, activation='softmax')(x)
 
     model = keras.models.Model(inputs=base_model.input, outputs=predictions)
     return model
 
-# %%
 def setup_to_transfer_learn(model, base_model):
   """Freeze all layers and compile the model"""
   for layer in base_model.layers:
@@ -45,9 +44,6 @@ def setup_to_transfer_learn(model, base_model):
               metrics=['accuracy'])
   return model
 
-# %%
-
-# %%
 def fit_model(model, train_gen, train_samps, n_epochs,
               val_gen, val_samps, batch_size):
 
@@ -60,7 +56,6 @@ def fit_model(model, train_gen, train_samps, n_epochs,
 
   return model
 
-# %%
 def plot_training_results(history, n_epochs):
   acc = history.history['accuracy']
   val_acc = history.history['val_accuracy']
@@ -84,7 +79,6 @@ def plot_training_results(history, n_epochs):
   plt.title('Training and Validation Loss')
   plt.show()
 
-# %%
 def main():
   train_generator, validation_generator = image_pipeline.main()
   base_model = keras.applications.Xception(include_top=False,
@@ -112,7 +106,6 @@ def main():
   labels = train_generator.class_indices
   labels = dict((v,k) for k,v in labels.items())
 
-# %%
 if __name__ == '__main__':
   main()
 

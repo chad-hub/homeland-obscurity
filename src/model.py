@@ -67,7 +67,6 @@ def create_model(num_classes, data_augmentation, img_height, img_width, train_ds
   model = Sequential([
 	    # data_augmentation,
 	    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-
 	    layers.Conv2D(32, 3, strides=2, padding='valid', activation='relu'),
 	    layers.MaxPooling2D(pool_size=(2, 2), strides=2),
 	    layers.Dropout(0.2),
@@ -80,16 +79,12 @@ def create_model(num_classes, data_augmentation, img_height, img_width, train_ds
 	    layers.MaxPooling2D(pool_size=(2, 2), strides=2),
 	    layers.Dropout(0.2),
 
-	    # layers.Conv2D(32, 5, padding='same', activation='relu'),
-	    # layers.MaxPooling2D(),
-	    # layers.Dropout(0.1),
-
 	    layers.Flatten(),
 	    layers.Dense(128, activation='relu'),
 	    layers.Dense(num_classes, activation='softmax')])
 
   model.compile(optimizer='adam',
-	                loss='sparse_categorical_crossentropy',
+	                loss='categorical_crossentropy',
 	                metrics=['accuracy'])
 
   print(model.summary())
@@ -98,18 +93,23 @@ def create_model(num_classes, data_augmentation, img_height, img_width, train_ds
 
   return model
 
-def train_model(model, n_epochs, train_ds, val_ds):
-  history = model.fit_generator(train_ds,
-                      validation_data = val_ds,
-                      validation_steps=val_ds.n//val_ds.batch_size,
+def train_model(model, n_epochs, train_gen, val_gen):
+  model = model.fit_generator(train_gen,
+                      validation_data = val_gen,
+                      validation_steps=val_gen.n // val_gen.batch_size,
                       epochs=n_epochs,
-                      steps_per_epoch=train_ds.n//train_ds.batch_size,
-                      use_multiprocessing=True,
-                      workers = -1)
+                      steps_per_epoch=train_gen.n//train_gen.batch_size)
+                      # use_multiprocessing=True,
+                      # workers = -1)
 
+
+  return model
+
+
+# %%
+
+def plot_training_results(history, n_epochs):
   acc = history.history['accuracy']
-
-  ##plot training results
   val_acc = history.history['val_accuracy']
 
   loss=history.history['loss']
@@ -130,8 +130,6 @@ def train_model(model, n_epochs, train_ds, val_ds):
   plt.legend(loc='upper right')
   plt.title('Training and Validation Loss')
   plt.show()
-
-  return model
 
 # %%
 def plot_home_weights(class_names, train_data):
@@ -173,8 +171,6 @@ if __name__ == '__main__':
 
   train_generator, validation_generator = image_pipeline.main()
 
-  # train_ds, val_ds, class_names = image_process(data_dir, batch_size, img_height, img_width, num_classes)
-
   data_augmentation = keras.Sequential([
     layers.experimental.preprocessing.RandomFlip("horizontal",
                                                  input_shape=(img_height,
@@ -188,7 +184,9 @@ if __name__ == '__main__':
   model = create_model(num_classes, data_augmentation, img_height,
                           img_width, train_generator)
 
-  model = train_model(model, n_epochs, train_generator, validation_generator)
+  history = train_model(model, n_epochs, train_generator, validation_generator)
+
+  plot_training_results(history, n_epochs)
 
 # %%
 # filename = '../models/cnn_sequential/train_model'
@@ -200,4 +198,6 @@ if __name__ == '__main__':
 # train_generator.image_shape
 
 # # %%
-# validation_generator.image_shape
+validation_generator.n // validation_generator.batch_size
+# %%
+train_generator.n // train_generator.batch_size
