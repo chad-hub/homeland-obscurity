@@ -10,16 +10,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from skimage.color import rgb2gray
 from keras.models import Model
+import os
+import cv2
 
 plt.rcParams['axes.grid'] = False
 # from basic_image_eda import BasicImageEDA
 # %%
-img1 = keras.preprocessing.image.load_img('../data/tudor/images.58.jpg',target_size=(224,224, 3))
-img2 = keras.preprocessing.image.load_img('../data/victorian/download.1.jpg',target_size=(224,224, 3))
-img3 = keras.preprocessing.image.load_img('../data/modern/download.1.jpg',target_size=(224,224, 3))
+img1 = keras.preprocessing.image.load_img('../data/tudor/1.jpg',target_size=(224,224, 3))
+img2 = keras.preprocessing.image.load_img('../data/victorian/1.jpg',target_size=(224,224, 3))
+img3 = keras.preprocessing.image.load_img('../data/modern/1.jpg',target_size=(224,224, 3))
 
 # %%
-img3.shape
+img1
 # %%
 # Compute the Canny filter for two values of sigma
 # coin_gray = rgb2gray(coin)
@@ -181,12 +183,12 @@ data = ([img], None)
 model_test.summary()
 # %%
 explainer = GradCAM()
-grid = explainer.explain(data, model_test, class_index=5, layer_name="block5_conv3")  
+grid = explainer.explain(data, model_test, class_index=5, layer_name="block5_conv3")
 explainer.save(grid, '.','grad_cam.png')
 # %%
 
-## function to display activations 
-def display_activation(activations, col_size, row_size, act_index): 
+## function to display activations
+def display_activation(activations, col_size, row_size, act_index):
     activation = activations[act_index]
     activation_index=0
     fig, ax = plt.subplots(row_size, col_size, figsize=(row_size*5,col_size*4))
@@ -195,8 +197,8 @@ def display_activation(activations, col_size, row_size, act_index):
         for col in range(0,col_size):
             ax[row][col].imshow(activation[0, :, :, activation_index], cmap='gray')
             activation_index += 1
-    
-    
+
+
 
 
 layer_outputs = [layer.output for layer in model_test.layers]
@@ -208,3 +210,24 @@ display_activation(activations, 2, 2, 3)
 # %%
 display_activation(activations, 2, 2, 3)
 plt.tight_layout()
+
+# %%
+def image_sizes():
+    img_size = []
+    for dirpath, dirnames, filenames in os.walk("../data/tudor/."):
+        for filename in [f for f in filenames if f.endswith('.jpg')]: # to loop over all images you have on the directory
+            print(filename)
+            img_shape = cv2.imread(filename).shape
+            avg_color_per_row = np.average(img_shape, axis=0)
+            # avg_color = np.average(avg_color_per_row, axis=0)
+            img_size.append(avg_color_per_row)
+    np_results = np.array(img_size) # to make results a numpy array
+    plt.hist(np_results)
+    plt.show() # to show the histogram
+# %%
+image_sizes()
+
+# %%
+keras.preprocessing.image.load_img('../data/tudor/91.jpg',target_size=(224,224, 3))
+# %%
+cv2.imread('../data/tudor/91.jpg').shape

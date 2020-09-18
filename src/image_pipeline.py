@@ -1,3 +1,4 @@
+# %%
 from os.path import join
 import os
 
@@ -24,7 +25,7 @@ from PIL import Image
 def image_data_generator(data_dir,
                        data_augment=False,
                        batch_size=32,
-                       target_size=(299, 299),
+                       target_size=(150, 150),
                        color_mode='rgb',
                        class_mode='binary',
                        shuffle=True):
@@ -67,10 +68,11 @@ def image_data_generator(data_dir,
 
   return train_generator, validation_generator
 
+# %%
 def main():
   train_generator, validation_generator = image_data_generator('../data',data_augment=True)
   return train_generator, validation_generator
 
-
+# %%
 if __name__ == '__main__':
   train_generator, validation_generator = main()
