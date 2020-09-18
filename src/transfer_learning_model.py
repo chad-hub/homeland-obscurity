@@ -1,3 +1,4 @@
+# %%
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -15,7 +16,7 @@ matplotlib.style.use('ggplot')
 import image_pipeline
 import pickle
 
-
+# %%
 def add_new_last_layer(base_model, nb_classes=7):
     """Add last layer to the convnet
     Args:
@@ -29,9 +30,8 @@ def add_new_last_layer(base_model, nb_classes=7):
     # Convert final MxNxC tensor output into a 1xC tensor where C is the # of channels.
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(4096, activation='relu')(x)
-    x = keras.layers.Dropout(.25)(x)
+    x = keras.layers.Dropout(.2)(x)
     predictions = keras.layers.Dense(7, activation='softmax')(x)
-
     model = keras.models.Model(inputs=base_model.input, outputs=predictions)
     return model
 
@@ -79,34 +79,40 @@ def plot_training_results(history, n_epochs):
   plt.title('Training and Validation Loss')
   plt.show()
 
+# %%
 def main():
   train_generator, validation_generator = image_pipeline.main()
   base_model = keras.applications.Xception(include_top=False,
                                         weights='imagenet',
                                         input_shape=(299,299,3)
                                         )
-
   train_model = add_new_last_layer(base_model)
 
   train_model = setup_to_transfer_learn(train_model,base_model)
 
-  nb_epoch =15
+  n_epoch =15
   batch_size = 32
-  nb_train_samples = 574
-  nb_validation_samples = 139
+  n_train_samples = 574
+  n_validation_samples = 139
 
-  history = fit_model(train_model, train_generator, nb_train_samples,
-                        nb_epoch, validation_generator, nb_validation_samples,
+  history = fit_model(train_model, train_generator, n_train_samples,
+                        n_epoch, validation_generator, n_validation_samples,
                         batch_size)
 
   filename = '../models/transfer_learn/train_model'
-  train_model.save(filename)
+  tf.saved_model.save(train_model, filename)
 
-  plot_training_results(history, nb_epoch)
+  plot_training_results(history, n_epoch)
   labels = train_generator.class_indices
   labels = dict((v,k) for k,v in labels.items())
 
+# %%
 if __name__ == '__main__':
   main()
 
 # %%
+base_model = keras.applications.Xception(include_top=False,
+                                        weights='imagenet',
+                                        input_shape=(299,299,3)
+                                        )
+base_model.summary()

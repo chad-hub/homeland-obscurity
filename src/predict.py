@@ -20,7 +20,7 @@ plt.style.use('ggplot')
 
 import transfer_learning_model
 import image_pipeline
-from model import image_process
+# from model import image_process
 # %%
 def predict_one(model, test_image_path, labels, batch_size):
   img = keras.preprocessing.image.load_img(test_image_path,target_size=(299,299,3))
@@ -28,7 +28,7 @@ def predict_one(model, test_image_path, labels, batch_size):
   img = img.reshape((1,) + img.shape)
   pred = model.predict(img)
   predicted_class_indices = np.argmax(pred, axis=1)
-  predictions = [labels[k] for k in predicted_class_indices
+  predictions = [labels[k] for k in predicted_class_indices]
   return predictions
 
 
@@ -52,7 +52,7 @@ def plot_confusion_matrix(cm, labels):
   ax = sns.heatmap(cm, annot=True,cmap=plt.cm.Blues)
   plt.title('Confusion Matrix')
   ax.set_xticklabels(list(labels.values()), rotation=45)
-  ax.set_yticklabels(list(labels.values())[::-1], rotation=45)
+  ax.set_yticklabels(list(labels.values()), rotation=45)
   plt.ylabel('True label')
   plt.xlabel('Predicted label')
   plt.tight_layout()
@@ -78,7 +78,7 @@ if __name__ == '__main__':
   cnn_filename = '../models/transfer_learn/train_model'
   transfer_filename = '../models/cnn_sequential/train_model'
 
-  train_model = tf.keras.models.load_model(cnn_filename)
+  train_model = tf.keras.models.load_model(transfer_filename)
 
   test_image_path = '../data/cape-cod/download.3.jpg'
 

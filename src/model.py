@@ -5,6 +5,7 @@ import pandas as pd
 import timeit
 import matplotlib
 
+%load_ext tensorboard
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
@@ -15,7 +16,7 @@ AUTOTUNE = tf.data.experimental.AUTOTUNE ## tf.data transformation parameters
 matplotlib.style.use('ggplot')
 
 import image_pipeline
-import pickle
+import tf_explain
 # %%
 def image_process(data_dir, batch_size, img_height, img_width, num_classes):
   train_ds = tf.keras.preprocessing.image_dataset_from_directory(
@@ -67,7 +68,7 @@ def create_model(num_classes, data_augmentation, img_height, img_width, train_ds
   model = Sequential([
 	    # data_augmentation,
 	    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-	    layers.Conv2D(32, 3, strides=2, padding='valid', activation='relu'),
+	    layers.Conv2D(32, 3, strides=2, padding='valid', activation='relu', name='target_layer'),
 	    layers.MaxPooling2D(pool_size=(2, 2), strides=2),
 	    layers.Dropout(0.2),
 
@@ -93,15 +94,16 @@ def create_model(num_classes, data_augmentation, img_height, img_width, train_ds
 
   return model
 
-def train_model(model, n_epochs, train_gen, val_gen):
+def train_model(model, n_epochs, train_gen, val_gen, callbacks):
   model = model.fit_generator(train_gen,
                       validation_data = val_gen,
                       validation_steps=val_gen.n // val_gen.batch_size,
                       epochs=n_epochs,
-                      steps_per_epoch=train_gen.n//train_gen.batch_size)
+                      steps_per_epoch=train_gen.n//train_gen.batch_size,
+                      callbacks=[callbacks])
                       # use_multiprocessing=True,
                       # workers = -1)
-
+  %tensorboard --logdir logs
 
   return model
 
@@ -168,6 +170,7 @@ if __name__ == '__main__':
   num_classes = 7
   n_epochs = 7
   data_dir = '../data'
+  output_dir = '../callbacks'
 
   train_generator, validation_generator = image_pipeline.main()
 
@@ -184,20 +187,68 @@ if __name__ == '__main__':
   model = create_model(num_classes, data_augmentation, img_height,
                           img_width, train_generator)
 
-  history = train_model(model, n_epochs, train_generator, validation_generator)
+  test_images = []
+  test_labels = []
+  for idx,i in enumerate(range(0, 4, 3)):
+    for j in range(6):
+      test_images.append(validation_generator.__getitem__(i)[0][j])
+      test_labels.append(validation_generator.__getitem__(i)[1][j])
+
+  validation_class_zero = (
+      np.array(
+          [
+              el
+              for el, label in zip(test_images, test_labels)
+              if np.all(np.argmax(label) == 0)
+          ][0:5]
+      ),
+      None,
+  )
+  validation_class_five = (
+      np.array(
+          [
+              el
+              for el, label in zip(test_images, test_labels)
+              if np.all(np.argmax(label) == 5)
+          ][0:5]
+      ),
+      None,
+  )
+  callbacks = [
+
+      tf_explain.callbacks.GradCAMCallback(
+          validation_class_zero, class_index=0, layer_name="target_layer",
+      ),
+      tf_explain.callbacks.GradCAMCallback(
+          validation_class_five, class_index=5, layer_name="target_layer"
+      ),
+      tf_explain.callbacks.ActivationsVisualizationCallback(
+          validation_class_zero, layers_name=["target_layer"]
+      ),
+      tf_explain.callbacks.SmoothGradCallback(
+          validation_class_zero, class_index=0, num_samples=15, noise=1.0
+      ),
+      tf_explain.callbacks.IntegratedGradientsCallback(
+          validation_class_zero, class_index=0, n_steps=10
+      ),
+      tf_explain.callbacks.VanillaGradientsCallback(validation_class_zero, class_index=0),
+      tf_explain.callbacks.GradientsInputsCallback(validation_class_zero, class_index=0),
+  ]
+
+  history = train_model(model, n_epochs, train_generator, validation_generator, callbacks)
+
+  filename = '../models/cnn_sequential/train_model'
+  tf.saved_model.save(model, filename)
 
   plot_training_results(history, n_epochs)
 
-# %%
-# filename = '../models/cnn_sequential/train_model'
-# model.save(filename)
-# # %%
-# # %%
-# plot_home_weights(class_names, train_ds)
-# # %%
-# train_generator.image_shape
 
 # # %%
 validation_generator.n // validation_generator.batch_size
 # %%
-train_generator.n // train_generator.batch_size
+test_images = []
+test_labels = []
+for idx,i in enumerate(range(0, 4, 3)):
+  for j in range(6):
+    test_images.append(validation_generator.__getitem__(i)[0][j])
+    test_labels.append(validation_generator.__getitem__(i)[1][j])

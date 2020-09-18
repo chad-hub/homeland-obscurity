@@ -1,4 +1,3 @@
-
 from os.path import join
 import os
 
@@ -45,14 +44,14 @@ def image_data_generator(data_dir,
                                           target_size=target_size,
                                           color_mode='rgb',
                                           batch_size=32,
-                                          # shuffle=0.2,
+                                          shuffle=False,
                                           class_mode='categorical',
                                           subset='training')
   validation_generator = datagen.flow_from_directory(data_dir,
                                           target_size=target_size,
                                           color_mode='rgb',
                                           batch_size=32,
-                                          # shuffle=0.2,
+                                          shuffle=False,
                                           class_mode='categorical',
                                           subset='validation')
 
@@ -72,6 +71,6 @@ def main():
   train_generator, validation_generator = image_data_generator('../data',data_augment=True)
   return train_generator, validation_generator
 
+
 if __name__ == '__main__':
   train_generator, validation_generator = main()
-
