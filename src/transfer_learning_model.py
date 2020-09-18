@@ -45,14 +45,15 @@ def setup_to_transfer_learn(model, base_model):
   return model
 
 def fit_model(model, train_gen, train_samps, n_epochs,
-              val_gen, val_samps, batch_size):
+              val_gen, val_samps, batch_size, callbacks):
 
   model = model.fit_generator(
         train_gen,
         epochs=n_epochs,
         steps_per_epoch=train_samps // batch_size,
         validation_data=val_gen,
-        validation_steps=val_samps // batch_size)
+        validation_steps=val_samps // batch_size,
+        callbacks=callbacks)
 
   return model
 
@@ -95,6 +96,7 @@ def main():
   n_train_samples = 574
   n_validation_samples = 139
 
+
   history = fit_model(train_model, train_generator, n_train_samples,
                         n_epoch, validation_generator, n_validation_samples,
                         batch_size)
@@ -111,8 +113,3 @@ if __name__ == '__main__':
   main()
 
 # %%
-base_model = keras.applications.Xception(include_top=False,
-                                        weights='imagenet',
-                                        input_shape=(299,299,3)
-                                        )
-base_model.summary()

@@ -9,11 +9,14 @@ keras = tf.keras
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.color import rgb2gray
+from keras.models import Model
+
+plt.rcParams['axes.grid'] = False
 # from basic_image_eda import BasicImageEDA
 # %%
-img1 = skimage.io.imread('../data/tudor/download.2.jpg')
-img2 = skimage.io.imread('../data/victorian/download.1.jpg')
-img3 = skimage.io.imread('../data/modern/download.1.jpg')
+img1 = keras.preprocessing.image.load_img('../data/tudor/images.58.jpg',target_size=(224,224, 3))
+img2 = keras.preprocessing.image.load_img('../data/victorian/download.1.jpg',target_size=(224,224, 3))
+img3 = keras.preprocessing.image.load_img('../data/modern/download.1.jpg',target_size=(224,224, 3))
 
 # %%
 img3.shape
@@ -23,7 +26,7 @@ img3.shape
 # io.imshow(coin_gray);
 def canny_filter(img):
   test_img = rgb2gray(img)
-  edges1 = feature.canny(test_img, sigma=1.5)
+  edges1 = feature.canny(test_img, sigma=3)
   edges2 = feature.canny(test_img, sigma=5)
 
   # display results
@@ -32,7 +35,7 @@ def canny_filter(img):
 
   ax1.imshow(test_img, cmap=plt.cm.gray)
   ax1.axis('off')
-  ax1.set_title('VI image', fontsize=20)
+  ax1.set_title('Image', fontsize=20)
 
   ax2.imshow(edges1, cmap=plt.cm.gray)
   ax2.axis('off')
@@ -70,6 +73,8 @@ def see_edges(img):
   plt.tight_layout()
 # %%
 see_edges(img1)
+see_edges(img2)
+see_edges(img3)
 
 # %%
 canny_filter(img1)
@@ -157,3 +162,49 @@ if __name__ == "__main__":
 
 
 # %%
+from tensorflow import visualize_cam, visualize_saliency
+# from vis.utils import utils
+from tensorflow.keras import activations
+# from tensorflow import vis
+# from keras.vis.visualization import visualize_saliency
+from tensorflow import utils
+from tensorflow.keras import activations
+import matplotlib.image as mpimg
+import scipy.ndimage as ndimage
+# %%
+from tf_explain.core.grad_cam import GradCAM
+# %%
+img = keras.preprocessing.image.load_img('../data/tudor/images.58.jpg',target_size=(224,224, 3))
+model_test = tf.keras.applications.vgg16.VGG16(weights="imagenet", include_top=True)
+img = tf.keras.preprocessing.image.img_to_array(img)
+data = ([img], None)
+model_test.summary()
+# %%
+explainer = GradCAM()
+grid = explainer.explain(data, model_test, class_index=5, layer_name="block5_conv3")  
+explainer.save(grid, '.','grad_cam.png')
+# %%
+
+## function to display activations 
+def display_activation(activations, col_size, row_size, act_index): 
+    activation = activations[act_index]
+    activation_index=0
+    fig, ax = plt.subplots(row_size, col_size, figsize=(row_size*5,col_size*4))
+    plt.suptitle('Output of layer 4')
+    for row in range(0,row_size):
+        for col in range(0,col_size):
+            ax[row][col].imshow(activation[0, :, :, activation_index], cmap='gray')
+            activation_index += 1
+    
+    
+
+
+layer_outputs = [layer.output for layer in model_test.layers]
+activation_model = Model(inputs=model_test.input, outputs=layer_outputs)
+activations = activation_model.predict(tf.keras.preprocessing.image.img_to_array(img3).reshape(1,224,224,3))
+display_activation(activations, 2, 2, 3)
+
+
+# %%
+display_activation(activations, 2, 2, 3)
+plt.tight_layout()

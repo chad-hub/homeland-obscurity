@@ -27,23 +27,29 @@ def predict_one(model, test_image_path, labels, batch_size):
   img = keras.preprocessing.image.img_to_array(img)
   img = img.reshape((1,) + img.shape)
   pred = model.predict(img)
+  print(pred)
   predicted_class_indices = np.argmax(pred, axis=1)
+  prob = pred[0][predicted_class_indices]
+  # print(predicted_class_indices)
   predictions = [labels[k] for k in predicted_class_indices]
-  return predictions
+  return predictions, prob
 
 
 # %%
-def predict_all(model, val_gen, val_samps, labels):
-  Y_preds = model.predict(val_gen,
-                                          val_samps // batch_size )
+def predict_all(model, val_gen, val_samps, labels, batch_size):
+  Y_preds = model.predict(val_gen, val_samps // batch_size + 1 )
+  # print(Y_preds)
   y_pred = np.argmax(Y_preds, axis=1)
+  # print(y_pred)
   cm = confusion_matrix(val_gen.classes, y_pred)
-  return cm
+  cr = classification_report(val_gen.classes, y_pred, target_names=list(labels.values()), output_dict=True)
+  return cm, cr
 
 
-def display_img(prediction, test_image_path, labels):
+def display_img(prediction, test_image_path, labels, prob):
   plt.imshow(keras.preprocessing.image.load_img(test_image_path))
-  plt.title(f'Predicted: {prediction[0]}')
+  print(prediction)
+  plt.title(f'Predicted: {prediction[0]} \n {np.round(float(prob)*100, 4)}% Probability')
   plt.grid(None)
 
 
@@ -55,16 +61,16 @@ def plot_confusion_matrix(cm, labels):
   ax.set_yticklabels(list(labels.values()), rotation=45)
   plt.ylabel('True label')
   plt.xlabel('Predicted label')
-  plt.tight_layout()
+  # plt.tight_layout()
   plt.show()
 
 
 # %%
 if __name__ == '__main__':
-  nb_epoch =5
+  n_epoch = 5
   batch_size = 32
-  nb_train_samples = 574
-  nb_validation_samples = 139
+  n_train_samples = 574
+  n_validation_samples = 139
   img_height = 299
   img_width = 299
   num_classes = 7
@@ -75,15 +81,19 @@ if __name__ == '__main__':
   labels = train_generator.class_indices
   labels = dict((v,k) for k,v in labels.items())
 
-  cnn_filename = '../models/transfer_learn/train_model'
-  transfer_filename = '../models/cnn_sequential/train_model'
+  transfer_filename = '../models/transfer_learn/train_model'
+  cnn_filename = '../models/cnn_sequential/train_model'
 
   train_model = tf.keras.models.load_model(transfer_filename)
+  # print(train_model.summary())
 
-  test_image_path = '../data/cape-cod/download.3.jpg'
+  test_image_path = '../data/modern/images.10.jpg'
 
 
-  prediction = predict_one(train_model, test_image_path , labels, batch_size)
-  display_img(prediction, test_image_path, labels)
-  cm = predict_all(train_model, validation_generator, nb_validation_samples, labels)
+  prediction, prob = predict_one(train_model, test_image_path , labels, batch_size)
+  display_img(prediction, test_image_path, labels, prob)
+
+  cm, cr = predict_all(train_model, validation_generator, n_validation_samples, labels, batch_size)
   plot_confusion_matrix(cm, labels)
+  table = pd.DataFrame(cr).transpose()
+  display(table)
