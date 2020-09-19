@@ -17,7 +17,7 @@ import image_pipeline
 import pickle
 
 # %%
-def add_new_last_layer(base_model, nb_classes=7):
+def add_new_last_layer(base_model, n_classes=5):
     """Add last layer to the convnet
     Args:
     base_model: keras model excluding top
@@ -31,33 +31,45 @@ def add_new_last_layer(base_model, nb_classes=7):
     x = keras.layers.GlobalAveragePooling2D()(x)
     x = keras.layers.Dense(4096, activation='relu')(x)
     x = keras.layers.Dropout(.2)(x)
-    predictions = keras.layers.Dense(7, activation='softmax')(x)
+    predictions = keras.layers.Dense(n_classes, activation='softmax')(x)
     model = keras.models.Model(inputs=base_model.input, outputs=predictions)
     return model
+
+def setup_to_finetune(model, layer_level):
+    """Freeze the bottom layer_level layers and train the rest
+
+    Args:
+     model: keras model
+    """
+    for layer in model.layers[:layer_level]:
+        layer.trainable = False
+    for layer in model.layers[layer_level:]:
+        layer.trainable = True
+
 
 def setup_to_transfer_learn(model, base_model):
   """Freeze all layers and compile the model"""
   for layer in base_model.layers:
     layer.trainable = False
-  model.compile(optimizer='adam',
+  model.compile(optimizer=keras.optimizers.Adam(1e-5),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
   return model
 
-def fit_model(model, train_gen, train_samps, n_epochs,
-              val_gen, val_samps, batch_size, callbacks):
 
-  model = model.fit_generator(
+def fit_model(model, train_gen, n_epochs, val_gen, initial_epoch):
+
+  model = model.fit(
         train_gen,
         epochs=n_epochs,
-        steps_per_epoch=train_samps // batch_size,
+        steps_per_epoch=train_gen.n // train_gen.batch_size,
         validation_data=val_gen,
-        validation_steps=val_samps // batch_size,
-        callbacks=callbacks)
+        validation_steps=val_gen.n // val_gen.batch_size,
+        initial_epoch=initial_epoch)
 
   return model
 
-def plot_training_results(history, n_epochs):
+def plot_training_results(history, n_epochs, fine_tune=True):
   acc = history.history['accuracy']
   val_acc = history.history['val_accuracy']
 
@@ -66,45 +78,79 @@ def plot_training_results(history, n_epochs):
 
   epochs_range = range(n_epochs)
 
-  plt.figure(figsize=(8, 8))
-  plt.subplot(1, 2, 1)
-  plt.plot(epochs_range, acc, label='Training Accuracy')
-  plt.plot(epochs_range, val_acc, label='Validation Accuracy')
-  plt.legend(loc='lower right')
-  plt.title('Training and Validation Accuracy')
+  initial_epochs = n_epochs
 
-  plt.subplot(1, 2, 2)
-  plt.plot(epochs_range, loss, label='Training Loss')
-  plt.plot(epochs_range, val_loss, label='Validation Loss')
-  plt.legend(loc='upper right')
-  plt.title('Training and Validation Loss')
-  plt.show()
+  if fine_tune:
+    plt.figure(figsize=(8, 8))
+    plt.subplot(2, 1, 1)
+    plt.plot(acc, label='Training Accuracy')
+    plt.plot(val_acc, label='Validation Accuracy')
+    plt.plot([initial_epochs-1,initial_epochs-1],
+                plt.ylim(), label='Start Fine Tuning')
+    plt.ylim([0, 1.0])
+    plt.legend(loc='lower right')
+    plt.title('Training and Validation Accuracy')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(loss, label='Training Loss')
+    plt.plot(val_loss, label='Validation Loss')
+    plt.ylim([0, 1.0])
+    plt.plot([initial_epochs-1,initial_epochs-1],
+              plt.ylim(), label='Start Fine Tuning')
+    plt.legend(loc='upper right')
+    plt.title('Training and Validation Loss')
+    plt.show()
+
+  else:
+    plt.figure(figsize=(8, 8))
+    plt.subplot(2, 1, 1)
+    plt.plot(epochs_range, acc, label='Training Accuracy')
+    plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+    plt.legend(loc='lower right')
+    plt.title('Training and Validation Accuracy')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(epochs_range, loss, label='Training Loss')
+    plt.plot(epochs_range, val_loss, label='Validation Loss')
+    plt.legend(loc='upper right')
+    plt.title('Training and Validation Loss')
+    plt.show()
+
 
 # %%
 def main():
   train_generator, validation_generator = image_pipeline.main()
   base_model = keras.applications.Xception(include_top=False,
                                         weights='imagenet',
-                                        input_shape=(299,299,3)
+                                        input_shape=(150,150,3)
                                         )
   train_model = add_new_last_layer(base_model)
 
   train_model = setup_to_transfer_learn(train_model,base_model)
 
-  n_epoch =15
-  batch_size = 32
-  n_train_samples = 574
-  n_validation_samples = 139
+  n_epoch =10
+  fine_tune = True
 
 
-  history = fit_model(train_model, train_generator, n_train_samples,
-                        n_epoch, validation_generator, n_validation_samples,
-                        batch_size)
+  history = fit_model(train_model, train_generator, n_epoch, validation_generator, initial_epoch = 0)
+  plot_training_results(history, n_epoch, fine_tune=False)
+
+  if fine_tune:
+    fine_tune_at = 123
+    fine_tune_epochs = 10
+    total_epochs = n_epoch + fine_tune_epochs
+    setup_to_finetune(train_model,fine_tune_at)
+    for i, layer in enumerate(train_model.layers):
+      print(i, layer.name, layer.trainable)
+
+    tune_history = fit_model(train_model, train_generator, total_epochs, validation_generator,
+                        initial_epoch=history.epoch[-1])
+    plot_training_results(tune_history, total_epochs, fine_tune=True)
 
   filename = '../models/transfer_learn/train_model'
   tf.saved_model.save(train_model, filename)
 
-  plot_training_results(history, n_epoch)
+
   labels = train_generator.class_indices
   labels = dict((v,k) for k,v in labels.items())
 
@@ -113,3 +159,6 @@ if __name__ == '__main__':
   main()
 
 # %%
+plot_training_results(tune_history, n_epoch, fine_tune=True)
+
+
