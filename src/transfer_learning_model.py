@@ -69,7 +69,7 @@ def fit_model(model, train_gen, n_epochs, val_gen, initial_epoch):
 
   return model
 
-def plot_training_results(history, n_epochs, fine_tune=True):
+def plot_training_results(history, n_epochs, fine_tune=True, *args):
   acc = history.history['accuracy']
   val_acc = history.history['val_accuracy']
 
@@ -81,6 +81,12 @@ def plot_training_results(history, n_epochs, fine_tune=True):
   initial_epochs = n_epochs
 
   if fine_tune:
+    acc+= fine_tune_history.history['accuracy']
+    val_acc+= fine_tune_history.history['val_accuracy']
+
+    loss += fine_tune_history.history['loss']
+    val_loss += fine_tune_history.history['val_loss']
+
     plt.figure(figsize=(8, 8))
     plt.subplot(2, 1, 1)
     plt.plot(acc, label='Training Accuracy')
@@ -128,7 +134,7 @@ def main():
 
   train_model = setup_to_transfer_learn(train_model,base_model)
 
-  n_epoch =10
+  n_epoch =5
   fine_tune = True
 
 
@@ -137,7 +143,7 @@ def main():
 
   if fine_tune:
     fine_tune_at = 123
-    fine_tune_epochs = 10
+    fine_tune_epochs = 5
     total_epochs = n_epoch + fine_tune_epochs
     setup_to_finetune(train_model,fine_tune_at)
     for i, layer in enumerate(train_model.layers):
@@ -145,7 +151,7 @@ def main():
 
     tune_history = fit_model(train_model, train_generator, total_epochs, validation_generator,
                         initial_epoch=history.epoch[-1])
-    plot_training_results(tune_history, total_epochs, fine_tune=True)
+    plot_training_results(history, total_epochs, True, tune_history)
 
   filename = '../models/transfer_learn/train_model'
   tf.saved_model.save(train_model, filename)
