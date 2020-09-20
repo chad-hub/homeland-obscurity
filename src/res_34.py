@@ -44,7 +44,3 @@ class ResidualUnit(keras.layers.Layer):
       skip_Z = layer(skip_Z)
     return self.activation(Z + skip_Z)
 
-
-# %%
-model = keras.Sequential()
-models.add(layers.Conv2D(64, 7,padding='valid', activation='relu', name='target_layer')

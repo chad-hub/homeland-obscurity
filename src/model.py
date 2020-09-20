@@ -28,6 +28,7 @@ matplotlib.style.use('ggplot')
 
 import image_pipeline
 import tf_explain
+from res_34 import ResidualUnit
 # %%
 def image_process(data_dir, batch_size, img_height, img_width, num_classes):
   train_ds = tf.keras.preprocessing.image_dataset_from_directory(
@@ -66,7 +67,8 @@ def image_process(data_dir, batch_size, img_height, img_width, num_classes):
 def create_model(num_classes, img_height, img_width, train_ds, lr=1e-3):
 
   model = Sequential([
-	    layers.experimental.preprocessing.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
+	    layers.experimental.preprocessing.Rescaling(1./255,
+                                    input_shape=(img_height, img_width, 3)),
 
       layers.Conv2D(64, 7,padding='valid', activation='relu', name='target_layer'),
 	    layers.MaxPooling2D(pool_size=(2, 2)),
@@ -141,7 +143,7 @@ if __name__ == '__main__':
   img_width = 150
   num_classes = 5
   n_epochs = 15
-  data_dir = '../data'
+  data_dir = '../data/train'
   lr = 1e-3 #learning rate for optimizer
 
   train_generator, validation_generator = image_pipeline.main()
