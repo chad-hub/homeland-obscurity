@@ -44,14 +44,14 @@ def image_data_generator(data_dir,
   train_generator = datagen.flow_from_directory(data_dir,
                                           target_size=target_size,
                                           color_mode='rgb',
-                                          batch_size=10,
+                                          batch_size=32,
                                           shuffle=False,
                                           class_mode='categorical',
                                           subset='training')
   validation_generator = datagen.flow_from_directory(data_dir,
                                           target_size=target_size,
                                           color_mode='rgb',
-                                          batch_size=10,
+                                          batch_size=32,
                                           shuffle=False,
                                           class_mode='categorical',
                                           subset='validation')
@@ -61,7 +61,7 @@ def image_data_generator(data_dir,
 
 # %%
 def main():
-  train_generator, validation_generator = image_data_generator('../data',data_augment=True)
+  train_generator, validation_generator = image_data_generator('../data/train',data_augment=True)
   return train_generator, validation_generator
 
 # %%
