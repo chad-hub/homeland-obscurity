@@ -44,27 +44,18 @@ def image_data_generator(data_dir,
   train_generator = datagen.flow_from_directory(data_dir,
                                           target_size=target_size,
                                           color_mode='rgb',
-                                          batch_size=32,
+                                          batch_size=10,
                                           shuffle=False,
                                           class_mode='categorical',
                                           subset='training')
   validation_generator = datagen.flow_from_directory(data_dir,
                                           target_size=target_size,
                                           color_mode='rgb',
-                                          batch_size=32,
+                                          batch_size=10,
                                           shuffle=False,
                                           class_mode='categorical',
                                           subset='validation')
 
-  # plt.figure(figsize=(10, 10))
-  # for images, _ in train_generator.take(1):
-  #   for i in range(9):
-  #     # augmented_images = data_augmentation(images)
-  #     ax = plt.subplot(3, 3, i + 1)
-  #     plt.imshow(images.numpy().astype("uint8"))
-  #     plt.axis("off")
-  #   plt.tight_layout()
-  #   plt.show()
 
   return train_generator, validation_generator
 

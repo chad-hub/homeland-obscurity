@@ -23,7 +23,7 @@ import image_pipeline
 # from model import image_process
 # %%
 def predict_one(model, test_image_path, labels, batch_size):
-  img = keras.preprocessing.image.load_img(test_image_path,target_size=(299,299,3))
+  img = keras.preprocessing.image.load_img(test_image_path,target_size=(150,150,3))
   img = keras.preprocessing.image.img_to_array(img)
   img = img.reshape((1,) + img.shape)
   pred = model.predict(img)
@@ -36,8 +36,8 @@ def predict_one(model, test_image_path, labels, batch_size):
 
 
 # %%
-def predict_all(model, val_gen, val_samps, labels, batch_size):
-  Y_preds = model.predict(val_gen, val_samps // batch_size + 1 )
+def predict_all(model, val_gen, labels):
+  Y_preds = model.predict(val_gen, val_gen.n // val_gen.batch_size + 1 )
   # print(Y_preds)
   y_pred = np.argmax(Y_preds, axis=1)
   # print(y_pred)
@@ -68,11 +68,8 @@ def plot_confusion_matrix(cm, labels):
 # %%
 if __name__ == '__main__':
   n_epoch = 5
-  batch_size = 32
-  n_train_samples = 574
-  n_validation_samples = 139
-  img_height = 299
-  img_width = 299
+  img_height = 150
+  img_width = 150
   num_classes = 7
   data_dir = '../data'
 
@@ -87,13 +84,13 @@ if __name__ == '__main__':
   train_model = tf.keras.models.load_model(transfer_filename)
   # print(train_model.summary())
 
-  test_image_path = '../data/modern/images.10.jpg'
+  test_image_path = '../data/modern/10.jpg'
 
 
   prediction, prob = predict_one(train_model, test_image_path , labels, batch_size)
   display_img(prediction, test_image_path, labels, prob)
 
-  cm, cr = predict_all(train_model, validation_generator, n_validation_samples, labels, batch_size)
+  cm, cr = predict_all(train_model, validation_generator, labels)
   plot_confusion_matrix(cm, labels)
   table = pd.DataFrame(cr).transpose()
   display(table)

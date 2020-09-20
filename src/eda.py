@@ -1,17 +1,23 @@
 # %%
 import skimage
+
 import skimage.io
 from skimage import io, color
 from skimage.filters import roberts, sobel, scharr, prewitt, gaussian
 from skimage import feature
+
+
+from tensorflow.keras import layers
 import tensorflow as tf
 keras = tf.keras
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.color import rgb2gray
 from keras.models import Model
-import os
-import cv2
+import os, random, cv2
+from keras.preprocessing.image import img_to_array
+from numpy import expand_dims
+
 
 plt.rcParams['axes.grid'] = False
 # from basic_image_eda import BasicImageEDA
@@ -21,7 +27,7 @@ img2 = keras.preprocessing.image.load_img('../data/victorian/1.jpg',target_size=
 img3 = keras.preprocessing.image.load_img('../data/modern/1.jpg',target_size=(224,224, 3))
 
 # %%
-img1
+img3
 # %%
 # Compute the Canny filter for two values of sigma
 # coin_gray = rgb2gray(coin)
@@ -95,27 +101,7 @@ plt.grid(None)
 blurred = gaussian(sobel_img, sigma=0.5)
 plt.imshow(blurred)
 plt.grid(None)
-# %%
-import numpy as np
-
-# %%
-light_spots = np.array((img1 > 245).nonzero()).T
-# %%
-light_spots.shape
-# %%
-
-plt.plot(light_spots[:, 1], light_spots[:, 0], 'o')
-plt.imshow(img1)
-plt.title('light spots in image')
-# plt.imshow(rgb2gray(img1))
-# %%
-dark_spots = np.array((img1 < 3).nonzero()).T
-dark_spots.shape
-
-# %%
-plt.plot(dark_spots[:, 1], dark_spots[:, 0], 'o')
-plt.imshow(img1)
-plt.title('dark spots in image')
+#
 
 
 # %%
@@ -231,3 +217,44 @@ image_sizes()
 keras.preprocessing.image.load_img('../data/tudor/91.jpg',target_size=(224,224, 3))
 # %%
 cv2.imread('../data/tudor/91.jpg').shape
+
+# %%
+def show_augmented_img(dir_path):
+    img_path = random.choice(os.listdir(dir_path))
+    img = keras.preprocessing.image.load_img(dir_path+img_path,target_size=(224,224, 3))
+    data = img_to_array(img)
+    samps = expand_dims(data, 0)
+    plt.figure(figsize=(8, 8))
+    for i in range(9):
+        augmented_images = data_augmentation(samps)
+        ax = plt.subplot(3, 3, i + 1)
+        plt.imshow(augmented_images[0].numpy().astype('uint8'))
+        plt.axis("off")
+    plt.suptitle('Data Augmentation', fontsize=18)
+    # plt.tight_layout()
+    plt.show()
+
+if __name__ == '__main__':
+    data_augmentation = keras.Sequential(
+    [
+        layers.experimental.preprocessing.RandomFlip("horizontal",
+                                                 input_shape=(124,
+                                                              124,
+                                                              3)),
+        layers.experimental.preprocessing.RandomRotation(0.005),
+        layers.experimental.preprocessing.RandomZoom(0.01),
+        layers.experimental.preprocessing.RandomHeight(0.20),
+        layers.experimental.preprocessing.RandomWidth(0.20),
+    ])
+
+    paths = ['../data/tudor/', '../data/modern/',
+                '../data/ranch/', '../data/victorian/','../data/cape-cod/' ]
+
+    show_augmented_img(np.random.choice(paths))
+# %%
+
+# %%
+def someFunction(*args):
+    print(args)
+
+someFunction(1)
