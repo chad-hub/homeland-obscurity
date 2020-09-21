@@ -144,7 +144,7 @@ def main():
   fine_tune = True
 
   if fine_tune:
-    fine_tune_at = 123
+    fine_tune_at = 100
     fine_tune_epochs = 10
     total_epochs = n_epoch + fine_tune_epochs
     setup_to_finetune(train_model,fine_tune_at)
@@ -154,7 +154,7 @@ def main():
                         history.epoch[-1])
     plot_training_results(history, n_epoch, fine_tune, tune_history)
 
-  filename = '../models/transfer_learn/train_model'
+  filename = '../models/transfer_learn/train_model_resnet150'
   tf.saved_model.save(train_model, filename)
 
 

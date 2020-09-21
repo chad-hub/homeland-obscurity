@@ -102,9 +102,9 @@ def create_model(num_classes, img_height, img_width, train_ds, lr=1e-3):
 def train_model(model, n_epochs, train_gen, val_gen):
   model = model.fit(train_gen,
                       validation_data = val_gen,
-                      validation_steps=val_gen.n // val_gen.batch_size,
+                      validation_steps=val_gen.n // val_gen.batch_size + 1,
                       epochs=n_epochs,
-                      steps_per_epoch=train_gen.n//train_gen.batch_size)
+                      steps_per_epoch=train_gen.n//train_gen.batch_size + 1)
 
   return model
 
@@ -142,15 +142,14 @@ if __name__ == '__main__':
   img_height = 150
   img_width = 150
   num_classes = 5
-  n_epochs = 15
-  data_dir = '../data/train'
-  lr = 1e-3 #learning rate for optimizer
+  n_epochs = 10
+  data_dir = '../data/train/'
+  lr = 1e-1 #learning rate for optimizer
 
-  train_generator, validation_generator = image_pipeline.main()
-
+  train_generator, validation_generator, test_generator = image_pipeline.main()
 
   model = create_model(num_classes, img_height,
-                          img_width, train_generator)
+                          img_width, train_generator, lr)
 
   # log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
   # callbacks = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
@@ -162,7 +161,7 @@ if __name__ == '__main__':
   #                           write_images=True),
   #                   EarlyStopping(patience=5)]
 
-  history = train_model(model, n_epochs, train_generator, validation_generator, ) #callbacks if it can work
+  history = train_model(model, n_epochs, train_generator, validation_generator) #callbacks if it can work
 
   # %tensorboard --logdir logs/fit
 
