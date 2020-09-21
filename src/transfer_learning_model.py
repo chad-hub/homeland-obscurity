@@ -125,7 +125,7 @@ def plot_training_results(history, n_epochs, fine_tune, *args):
 
 # %%
 def main():
-  train_generator, validation_generator = image_pipeline.main()
+  train_generator, validation_generator, test_generator = image_pipeline.main()
   base_model = keras.applications.Xception(include_top=False,
                                         weights='imagenet',
                                         input_shape=(150,150,3)
@@ -134,7 +134,7 @@ def main():
 
   train_model = setup_to_transfer_learn(train_model,base_model,lr = 1e-3)
 
-  n_epoch = 20
+  n_epoch = 10
   fine_tune = False
 
 
@@ -145,7 +145,7 @@ def main():
 
   if fine_tune:
     fine_tune_at = 123
-    fine_tune_epochs = 20
+    fine_tune_epochs = 10
     total_epochs = n_epoch + fine_tune_epochs
     setup_to_finetune(train_model,fine_tune_at)
 

@@ -37,14 +37,18 @@ def create_model(num_classes, img_height, img_width, train_ds, lr=1e-3):
 	    # layers.experimental.preprocessing.Rescaling(1./255,
                                     # input_shape=(img_height, img_width, 3)),
 
-  model.add(layers.Conv2D(64, 7, strides=2, padding='valid',
+  model.add(layers.Conv2D(64, 7, strides=2, padding='same',
                        activation='relu', input_shape=[img_height, img_width, 3]))
   model.add(layers.BatchNormalization())
   model.add(layers.Activation('relu'))
-  model.add(layers.MaxPooling2D(pool_size=3, strides=2, padding='valid'))
+  model.add(layers.MaxPooling2D(pool_size=3, strides=2, padding='same'))
   prev_filters = 64
   for filters in [64]*3 + [128]*4 + [256]*6 + [512]*3:
-    strides = 1 if filters == prev_filters else 2
+    if filters == prev_filters:
+      strides = 1
+    else:
+      strides = 2
+    # strides = 1 if filters == prev_filters else 2
     model.add(ResidualUnit(filters, strides=strides))
     prev_filters = filters
   model.add(layers.GlobalAvgPool2D())
