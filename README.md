@@ -24,10 +24,13 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
  
  Sources: Zillow.com, google images, bing images, Pintrest
  
- <p float="center">
+<p float="center">
   <img src="/eda_plots/tudor.png" alt="drawing" width="300" height="300"/>
   <img src="eda_plots/modern.PNG" alt="drawing" width="300" height="320"/>
   <img src="eda_plots/victorian.PNG" alt="drawing" width="300" height="300"/>
+</p>
+
+<p align="center">
   <img src="eda_plots/ranch.png" alt="drawing" width="300" height="340"/>
   <img src="eda_plots/cap_cod.PNG" alt="drawing" width="300" height="300"/>
 </p>
