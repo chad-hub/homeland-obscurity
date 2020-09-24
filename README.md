@@ -25,11 +25,22 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
  Sources: Zillow.com, google images, bing images, Pintrest
  
  <p float="center">
-  <img src="/eda_plots/tudor.png" alt="drawing" width="400" height="400"/>
-  <img src="eda_plots/modern.PNG" alt="drawing" width="400" height="420"/>
-  <img src="eda_plots/victorian.PNG" alt="drawing" width="400" height="400"/>
-  <img src="eda_plots/ranch.png" alt="drawing" width="400" height="440"/>
-  <img src="eda_plots/cap_cod.PNG" alt="drawing" width="400" height="400"/>
+  <img src="/eda_plots/tudor.png" alt="drawing" width="300" height="300"/>
+  <img src="eda_plots/modern.PNG" alt="drawing" width="300" height="320"/>
+  <img src="eda_plots/victorian.PNG" alt="drawing" width="300" height="300"/>
+  <img src="eda_plots/ranch.png" alt="drawing" width="300" height="340"/>
+  <img src="eda_plots/cap_cod.PNG" alt="drawing" width="300" height="300"/>
+</p>
+
+I've highlighted what I believe to be the most prominent and consistent features exhibited by the five home styles I selected. I sought out images that were fairly consistent with these features, and opted for the photos that most centrally displayed the homes. 
+
+## CNNs
+
+CNNS are widely regarded for thir ability to efficiently process images. In fact, they were originally modeled after how neurons in the visual cortex interact. Research by David H. Hubel and Torsten Wiesel in the late 1950s proved that neurons in the visual cortex have a small receptive field, and react only to specific shapes. Different neurons react to different shapes, and together they form the visual field. Their research also showed that some neurons react to more complex patterns, and that these patterns were combinations of the simpler shapes perceived by other neurons. 
+
+This study laid the ground work for CNNs. CNNs operate in a similar fashion
+<p float="center">
+  <img src="/eda_plots/home_cnn.png" alt="drawing" width="500" height="300"/>
 </p>
  
   
