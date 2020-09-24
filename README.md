@@ -1,4 +1,4 @@
-# Homeland-Obscurity
+# Homestead-Obscurity
 Using deep learning to classify home architecture
 
 
