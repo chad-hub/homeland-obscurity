@@ -13,4 +13,23 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
   1) There are many home architectures that have very distinguishing features
   2) There are many resources for home images
   
+ ## Data
+ | Architecture | Train Images | Test Images |
+ |--------------|--------------|-------------|
+ | Tudor | 508 | 40 |
+ | Modern | 600 | 49 |
+ | Victorian | 476 | 41 |
+ | Ranch | 426 | 42 |
+ | Modern | 500 | 40 |
+ 
+ Sources: Zillow.com, google images, bing images, Pintrest
+ 
+ <p float="left">
+  <img src="/eda_plots/tudor.png" alt="drawing" width="400"/>
+  <img src="eda_plots/modern.png" alt="drawing" width="400"/>
+  <img src="eda_plots/victorian.png" alt="drawing" width="400"/>
+  <img src="eda_plots/ranch.png" alt="drawing" width="400"/>
+  <img src="eda_plots/cape_cod.png" alt="drawing" width="400"/>
+</p>
+ 
   
