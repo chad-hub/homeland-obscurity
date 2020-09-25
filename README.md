@@ -90,3 +90,10 @@ There are some signs of over-fitting / confusion with the learning rate going do
   <img src="/eda_plots/final_Xception_conf_M.png" alt="drawing" width="600"/>
 </p>
  
+ A perfect confusion matrix would have all solid dark blue along the diagonal, so the model is performing exceptionally well. The best accuracy I was able to acheive was 84%.
+ 
+  <p align="center">
+  <img src="/eda_plots/xception_pred_victorian.png" alt="drawing" width="475"/>
+  <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="475"/>
+</p>
+ 
