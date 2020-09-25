@@ -28,14 +28,14 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
  
  Sources: Zillow.com, google images, bing images, Pintrest
  
-<p float="center">
-  <img src="/eda_plots/tudor.png" alt="drawing" width="300" height="300"/>
-  <img src="eda_plots/modern.PNG" alt="drawing" width="300" height="310"/>
-  <img src="eda_plots/victorian.PNG" alt="drawing" width="300" height="300"/>
+<p align="center">
+  <img src="/eda_plots/tudor.png" alt="drawing" width="250" height="250"/>
+  <img src="eda_plots/modern.PNG" alt="drawing" width="250" height="260"/>
+  <img src="eda_plots/victorian.PNG" alt="drawing" width="250" height="250"/>
 </p>
 <p align="center">
-  <img src="eda_plots/ranch.png" alt="drawing" width="300" height="340"/>
-  <img src="eda_plots/cap_cod.PNG" alt="drawing" width="300" height="300"/>
+  <img src="eda_plots/ranch.png" alt="drawing" width="250" height="280"/>
+  <img src="eda_plots/cap_cod.PNG" alt="drawing" width="250" height="250"/>
 </p>
 
 I've highlighted what I believe to be the most prominent and distinguishing features exhibited by the five home styles I selected. I sought out images that were fairly consistent with these features, and opted for the photos that most centrally displayed the homes. 
