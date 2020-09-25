@@ -44,9 +44,9 @@ def predict_all(model, val_gen, labels):
   # print(y_pred)
   cm = confusion_matrix(val_gen.classes, y_pred)
   cr = classification_report(val_gen.classes, y_pred, target_names=list(labels.values()), output_dict=True)
-  top_k = keras.applications.xception.decode_predictions(Y_preds, top=5)
+  # top_k = keras.applications.xception.decode_predictions(Y_preds, top=5)
 
-  return cm, cr, Y_preds, top_k
+  return cm, cr, Y_preds
 
 
 def display_img(prediction, test_image_path, labels, prob):
@@ -86,16 +86,16 @@ if __name__ == '__main__':
   transfer_filename = '../models/transfer_learn/train_model'
   cnn_filename = '../models/cnn_sequential/train_model'
 
-  train_model = tf.keras.models.load_model(transfer_filename)
+  train_model = tf.keras.models.load_model(cnn_filename)
   # print(train_model.summary())
 
-  test_image_path = '../data/test/cape-cod/7.jpg'
+  test_image_path = '../data/test/modern/7.jpg'
 
 
   prediction, prob = predict_one(train_model, test_image_path , labels)
   display_img(prediction, test_image_path, labels, prob)
 
-  cm, cr, all_prob, top_k = predict_all(train_model, validation_generator, labels)
+  cm, cr, all_prob = predict_all(train_model, validation_generator, labels)
   plot_confusion_matrix(cm, labels)
   table = pd.DataFrame(cr).transpose()
   display(table)

@@ -1,51 +1,46 @@
 # %%
-'''attempt to visualize CNN layers with callbacks '''
+import boto3
+import awscli
 
 
-  # test_images = []
-  # test_labels = []
-  # for idx,i in enumerate(range(0, 4, 3)):
-  #   for j in range(6):
-  #     test_images.append(validation_generator.__getitem__(i)[0][j])
-  #     test_labels.append(validation_generator.__getitem__(i)[1][j])
+def detect_labels(photo, bucket):
+  '''processes an image from s3 bucket into Amazon Rekognition
+   to determine objects in image + bounding box locations'''
 
-  # validation_class_zero = (
-  #     np.array(
-  #         [
-  #             el
-  #             for el, label in zip(test_images, test_labels)
-  #             if np.all(np.argmax(label) == 0)
-  #         ][0:5]
-  #     ),
-  #     None,
-  # )
-  # validation_class_five = (
-  #     np.array(
-  #         [
-  #             el
-  #             for el, label in zip(test_images, test_labels)
-  #             if np.all(np.argmax(label) == 5)
-  #         ][0:5]
-  #     ),
-  #     None,
-  # )
-  # callbacks = [
+  client=boto3.client('rekognition', region_name='us-east-1')
 
-  #     tf_explain.callbacks.GradCAMCallback(
-  #         validation_class_zero, class_index=0
-  #     )
-      # tf_explain.callbacks.GradCAMCallback(
-      #     validation_class_five, class_index=5
-      # ),
-      # # tf_explain.callbacks.ActivationsVisualizationCallback(
-      # #     validation_class_zero
-      
-      # tf_explain.callbacks.SmoothGradCallback(
-      #     validation_class_zero, class_index=0, num_samples=15, noise=1.0
-      # ),
-      # tf_explain.callbacks.IntegratedGradientsCallback(
-      #     validation_class_zero, class_index=0, n_steps=10
-      # ),
-      # tf_explain.callbacks.VanillaGradientsCallback(validation_class_zero, class_index=0),
-      # tf_explain.callbacks.GradientsInputsCallback(validation_class_zero, class_index=0),
-  # ]
+  response = client.detect_labels(Image={'S3Object':{'Bucket': bucket, 'Name':photo}},
+        MaxLabels=5)
+
+  print('Detected labels for ' + photo)
+  print()
+  for label in response['Labels']:
+      print ("Label: " + label['Name'])
+      print ("Confidence: " + str(label['Confidence']))
+      print ("Instances:")
+      for instance in label['Instances']:
+          print ("  Bounding box")
+          print ("    Top: " + str(instance['BoundingBox']['Top']))
+          print ("    Left: " + str(instance['BoundingBox']['Left']))
+          print ("    Width: " +  str(instance['BoundingBox']['Width']))
+          print ("    Height: " +  str(instance['BoundingBox']['Height']))
+          print ("  Confidence: " + str(instance['Confidence']))
+          print()
+
+      print ("Parents:")
+      for parent in label['Parents']:
+          print ("   " + parent['Name'])
+      print ("----------")
+      print ()
+  return len(response['Labels'])
+
+
+def main():
+    photo='train/tudor/23.jpg'
+    bucket='cbh-capstone3'
+    label_count=detect_labels(photo, bucket)
+    print("Labels detected: " + str(label_count))
+
+
+if __name__ == "__main__":
+    main()

@@ -29,39 +29,6 @@ matplotlib.style.use('ggplot')
 import image_pipeline
 import tf_explain
 from res_34 import ResidualUnit
-# %%
-def image_process(data_dir, batch_size, img_height, img_width, num_classes):
-  train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-                          data_dir,
-                          color_mode = 'rgb',
-                          validation_split=0.2,
-                          subset="training",
-                          seed=42,
-                          image_size=(img_height, img_width),
-                          batch_size=batch_size)
-  val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-                          data_dir,
-                          color_mode = 'rgb',
-                          validation_split=0.2,
-                          subset="validation",
-                          seed=42,
-                          image_size=(img_height, img_width),
-                          batch_size=batch_size)
-
-  class_names = train_ds.class_names
-
-  plt.figure(figsize=(10, 10))
-  for images, labels in train_ds.take(1):
-    for i in range(num_classes):
-      ax = plt.subplot(3, 3, i + 1)
-      plt.imshow(images[i].numpy().astype("uint8"))
-      plt.title(class_names[labels[i]])
-      plt.axis("off")
-    plt.tight_layout()
-    plt.show()
-
-
-  return train_ds, val_ds, class_names
 
 # %%
 def create_model(num_classes, img_height, img_width, train_ds, lr=1e-3):
