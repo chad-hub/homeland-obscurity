@@ -68,7 +68,7 @@ The true power of CNNs are most evident when we employ transfer-learning. With t
  After the minimal tweaking of the Xception model, I wanted to train the model to get a base line transfer learning accuracy. Below is a plot of the trainin and validation loss / accuracy. 
  
  <p align="center">
-  <img src="/eda_plots/ final_xception_pre_ft" alt="drawing" width="300"/>
+  <img src="/eda_plots/final_xception_pre_ft.png" alt="drawing" width="400"/>
 </p>
 
 In 10 epochs, allowing no adjustment to the weights in all of the built in layers of Xception, the validation accuracy approached 80% accuracy, an extremely impressive result. The next step was to begin unfreezing some of the layers in Xception to allow the model to adjust it's parameters to better classify the categories required. I also adjusted the learning rate, which controls how aggresively the model is allowed to adjust the pre-trained components of the model. In general, smaller learning rates are recommended when fine tuning a transfer learning model to fight over-fitting. Below are the same plots, but I've added a line indicating when I allowed the model to unfreeze layers and begin adjusting the pre-trained Xception weights. 
