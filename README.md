@@ -26,7 +26,7 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
  
 <p float="center">
   <img src="/eda_plots/tudor.png" alt="drawing" width="300" height="300"/>
-  <img src="eda_plots/modern.PNG" alt="drawing" width="300" height="320"/>
+  <img src="eda_plots/modern.PNG" alt="drawing" width="300" height="310"/>
   <img src="eda_plots/victorian.PNG" alt="drawing" width="300" height="300"/>
 </p>
 
@@ -35,13 +35,20 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
   <img src="eda_plots/cap_cod.PNG" alt="drawing" width="300" height="300"/>
 </p>
 
-I've highlighted what I believe to be the most prominent and consistent features exhibited by the five home styles I selected. I sought out images that were fairly consistent with these features, and opted for the photos that most centrally displayed the homes. 
+I've highlighted what I believe to be the most prominent and distinguishing features exhibited by the five home styles I selected. I sought out images that were fairly consistent with these features, and opted for the photos that most centrally displayed the homes. 
+
+## Data Augmentation
+
+My corpus of images is small, especially in the realm of neural network training. To prevent over-fitting, and introduce more variety for the model to train on, I applied an image augmentation protocol into my image processing pipline. The augmentation randomly zooms in, shifts along vertical and horizontal axis, randomly horizontal flips, and slightly rotates images. See example below.
+
+<p align="center">
+  <img src="/eda_plots/image_augmentation.PNG" alt="drawing" width="600" />
+</p>
 
 ## CNNs
 
 CNNS are widely regarded for thir ability to efficiently process images. In fact, they were originally modeled after how neurons in the visual cortex interact. Research by David H. Hubel and Torsten Wiesel in the late 1950s proved that neurons in the visual cortex have a small receptive field, and react only to specific shapes. Different neurons react to different shapes, and together they form the visual field. Their research also showed that some neurons react to more complex patterns, and that these patterns were combinations of the simpler shapes perceived by other neurons. 
 
-This study laid the ground work for CNNs. CNNs operate in a similar fashion
 <p align="center">
   <img src="/eda_plots/home_cnn.png" alt="drawing" width="600" height="300"/>
 </p>
@@ -49,10 +56,26 @@ This study laid the ground work for CNNs. CNNs operate in a similar fashion
 In the above illustration, each individual filter will travel the entirety of the image, capturing the filters respective patterns and aggregating that information into what are called activation maps, or convolutions. A helpful analogy is to think about polarized sunglasses: only the light that is aligned with the orientation of the polarized lens reaches our eyes. These activation maps are then pooled, which is a downsizing operation. The pooling captures the strongest signals in the activation maps and then reduces the size of the convolution. At shallow depths, these activation maps capture simple shapes, lines, edges, etc. These are called 'spatial patterns'. In and of themselves, these spatial patterns don't provide a whole lot of insight. As we include more and more convolutional layers, however, these activation maps begin to capture more complex, or 'cross-channel' patterns. Keeping with the architecture analogy, shallow layers capture a sharp angle, line, or edge, and as we get deeper we begin to see a door, window, and house begin to form. After the pooling layer, we flatten out the information and connect it to our classifications - 5 in our case. 
 
 ## Transfer Learning
-The true power of CNNs are most evident when we employ transfer-learning. With transfer learning, we utilize a pre-trained network and adjust it for our needs. Tehre are many readily available models to choose from, but I was most interested in, and had the best success with the Xception architecture (Francois Chollet - 2016). This model is trained on 350 million images and around 17,000 classes, and heavily features seperable convolutional layers. 
+The true power of CNNs are most evident when we employ transfer-learning. With transfer learning, we utilize a pre-trained network and adjust it for our needs. There are many readily available models to choose from, but I was most interested in, and had the best success with the Xception architecture (Francois Chollet - 2016). This model is trained on 350 million images and around 17,000 classes, and heavily features seperable convolutional layers. While traditional convolutional layers use filters that try to simultaneously capture spatial and cross-channel patterns, seperable layers strongly assumes that the spatial and cross-channel patterns can be modeled seperately. 
 
 <p align="center">
   <img src="/eda_plots/xception.PNG" alt="drawing" width="300"/>
 </p>
 
-  
+ Once I loaded in the Xception network, I began adjusting the layers to meet the requirements of my project. This involved removing the final layer, replcing with a dense (fully connected) layer and softmax activation with five classifications (one for each home type), and freezing the remaining layers from being able to train. Every other layer was frozen becuase, as a pre-trained model, it already has all the learned shapes / lines / edges built in. Softmax activation converts the final output layer of the neural network into probabilities in classification scenarios. These probabilities tell us which classification the model picks, as well as the confidence with which the pick was made. 
+ 
+ ## Transfer Learning + Fine Tuning
+ After the minimal tweaking of the Xception model, I wanted to train the model to get a base line transfer learning accuracy. Below is a plot of the trainin and validation loss / accuracy. 
+ 
+ <p align="center">
+  <img src="/eda_plots/ final_xception_pre_ft" alt="drawing" width="300"/>
+</p>
+
+In 10 epochs, allowing no adjustment to the weights in all of the built in layers of Xception, the validation accuracy approached 80% accuracy, an extremely impressive result. The next step was to begin unfreezing some of the layers in Xception to allow the model to adjust it's parameters to better classify the categories required. I also adjusted the learning rate, which controls how aggresively the model is allowed to adjust the pre-trained components of the model. In general, smaller learning rates are recommended when fine tuning a transfer learning model to fight over-fitting.  
+
+## Transfer Learning Results
+ 
+ <p align="center">
+  <img src="/eda_plots/final_Xception_conf_M.png" alt="drawing" width="300"/>
+</p>
+ 
