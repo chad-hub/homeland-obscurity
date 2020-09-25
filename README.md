@@ -45,6 +45,23 @@ My corpus of images is small, especially in the realm of neural network training
   <img src="/eda_plots/image_augmentation.PNG" alt="drawing" width="600" />
 </p>
 
+## EDA
+As I mentinoed, architecture is defined by its lines, shapes and edges. As such, edge recognition / detection is an important feature that will have to be extracted. Prior to running the images through the 'black box' of a CNN, I wanted to see if the prominence of the edges I identified in each image would indeed shine through with some basic edge detion. 
+
+| Modern Home Edge Detection |
+|----------------------------|
+| ![modern_edges](eda_plots/modern_home_edges.png) |
+
+| Tudor Home Edge Detection |
+|----------------------------|
+| ![tudor_edges](eda_plots/tudor_home_edges.png) | 
+
+| Victorian Home Edge Detection |
+|----------------------------|
+| ![victorian_edges](eda_plots/victorian_home_edges.png) | 
+
+As expected, the prominent features of the home types above are evident in the edge detection filters. 
+
 ## CNNs
 
 CNNS are widely regarded for thir ability to efficiently process images. In fact, they were originally modeled after how neurons in the visual cortex interact. Research by David H. Hubel and Torsten Wiesel in the late 1950s proved that neurons in the visual cortex have a small receptive field, and react only to specific shapes. Different neurons react to different shapes, and together they form the visual field. Their research also showed that some neurons react to more complex patterns, and that these patterns were combinations of the simpler shapes perceived by other neurons. 
@@ -68,7 +85,7 @@ The true power of CNNs are most evident when we employ transfer-learning. With t
  After the minimal tweaking of the Xception model, I wanted to train the model to get a base line transfer learning accuracy. Below is a plot of the trainin and validation loss / accuracy. 
  
  <p align="center">
-  <img src="/eda_plots/final_xception_pre_ft.png" alt="drawing" width="400"/>
+  <img src="/eda_plots/final_xception_pre_ft.png" alt="drawing" width="450"/>
 </p>
 
 In 10 epochs, allowing no adjustment to the weights in all of the built in layers of Xception, the validation accuracy approached 80% accuracy, an extremely impressive result. The next step was to begin unfreezing some of the layers in Xception to allow the model to adjust it's parameters to better classify the categories required. I also adjusted the learning rate, which controls how aggresively the model is allowed to adjust the pre-trained components of the model. In general, smaller learning rates are recommended when fine tuning a transfer learning model to fight over-fitting. Below are the same plots, but I've added a line indicating when I allowed the model to unfreeze layers and begin adjusting the pre-trained Xception weights. 
@@ -93,7 +110,16 @@ There are some signs of over-fitting / confusion with the learning rate going do
  A perfect confusion matrix would have all solid dark blue along the diagonal, so the model is performing exceptionally well. The best accuracy I was able to acheive was 84%.
  
   <p align="center">
-  <img src="/eda_plots/xception_pred_victorian.png" alt="drawing" width="400" height="400"/>
-  <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="400" height="400"/>
+  <img src="/eda_plots/xception_pred_victorian.png" alt="drawing" width="300" height="300"/>
+  <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="300" height="300"/>
 </p>
+ 
+ ## My Own CNN
+ 
+ I knew full well that acheiving anything close to the success of transfer-learning would be nearly impossible in the scope of this assignment. However, my goal in this project is to peek into the black box and understand what an excellent model reveals in the images and what a basic model from scratch would reveal. The basic structure of my base CNN is as follows:
+ 
+  <p align="center">
+  <img src="/eda_plots/baseline_cnn.PNG" alt="drawing" width="800"/>
+</p>
+ 
  
