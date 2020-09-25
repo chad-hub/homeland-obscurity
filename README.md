@@ -163,3 +163,12 @@ The above images are a sampling of the outputs from activation layers 2 and 5 fo
 </p>
 
 So any value that is negative, or does not contribute positively to feature determination, gets zero'd out. This zeroing out explains the blacked out images in my model above.  
+## Conclusion
+
+It is entirely feasible to use CNNs to classify home architecture styles. The most successful method is to employ transfer-learning with minor fine tuning. I also suggest that thousands more images would benefit the accuracy of the model. Another procedure that would increase accuracy is to include bounding boxes in the images. Bounding boxes, as shown below, tell the model exactly where to look for when training, and what we want the model to focus on for classification. 
+
+<p align="center">
+  <img src="/bounding_box.PNG" alt="drawing" width="450"/>
+</p>
+
+Bounding boxes eliminate any confusion caused by trees, grass, or shrubbery surrounding the home.  
