@@ -94,6 +94,6 @@ There are some signs of over-fitting / confusion with the learning rate going do
  
   <p align="center">
   <img src="/eda_plots/xception_pred_victorian.png" alt="drawing" width="400" height="400"/>
-  <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="400" height="450"/>
+  <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="400" height="400"/>
 </p>
  
