@@ -148,8 +148,8 @@ The model struggled to converge, and the accuracy rarely acheived a value greate
  ## Peek in the Black Box
  
 <p float="center">
-  <img src="/eda_plots/layer_2_activations.PNG" alt="drawing" width="800"/>
-  <img src="/eda_plots/layer_5_activations.PNG" alt="drawing" width="800"/>
+  <img src="/eda_plots/layer_2_activations.PNG" alt="drawing" width="1000"/>
+  <img src="/eda_plots/layer_5_activations.PNG" alt="drawing" width="1000"/>
 </p>
 
  
