@@ -114,32 +114,35 @@ There are some signs of over-fitting / confusion with the learning rate going do
   <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="300" height="300"/>
 </p>
  
- ## My Own CNN
+## My Own CNN
  
- I knew full well that acheiving anything close to the success of transfer-learning would be nearly impossible in the scope of this assignment. However, my goal in this project is to peek into the black box and understand what an excellent model reveals in the images and what a basic model from scratch would reveal. The basic structure of my base CNN is as follows:
+I knew full well that acheiving anything close to the success of transfer-learning would be nearly impossible in the scope of this assignment. However, my goal in this project is to peek into the black box and understand what an excellent model reveals in the images and what a basic model from scratch would reveal. The basic structure of my base CNN is as follows:
  
 <p align="center">
  <img src="/eda_plots/baseline_cnn.PNG" alt="drawing" width="800"/>
 </p>
  
- ## Training
+## Training
  
- I introduced the same image corpus to train my model, and the resulting accuracy was to be expected:
+I introduced the same image corpus to train my model, and the resulting accuracy was to be expected:
  
 <p align="center">
  <img src="/eda_plots/base_model_train.png" alt="drawing" width="450"/>
 </p>
  
- The model struggled to converge, and the accuracy rarely acheived a value greater than random. 
+The model struggled to converge, and the accuracy rarely acheived a value greater than random. 
  
  
- ## Results
+## Results
  
- <p align="center">
+<p align="center">
   <img src="/eda_plots/baseline_results.PNG" alt="drawing" width="600"/>
 </p>
+<p align="center">
+  <img src="/eda_plots/baseline_predict_tudor.png" alt="drawing" width="300"/>
+</p>
  
- Note that the model predicted modern homes for all the validation set. Exploring the 
+ Note that the model predicted modern homes for all the validation set classes. all of these predictions were made with very low probability, just above 1/5 as expected based on the confusion matrix and model accuracy. 
 
  
  
