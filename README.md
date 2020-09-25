@@ -1,10 +1,14 @@
 # Homestead-Obscurity
 Using deep learning to classify home architecture
 
+## Tech Stack
+<p align="center">
+ <img src="/eda_plots/teach_stack.png" alt="drawing" width="800"/>
+</p>
 
 ## Inspiration
 
-<p float="center">
+<p align="center">
   <img src="/eda_plots/hagia_sophia.PNG" alt="drawing" width="300"/>
   <img src="eda_plots/duomo.png" alt="drawing" width="300"/>
 </p>
@@ -127,7 +131,7 @@ I knew full well that acheiving anything close to the success of transfer-learni
 I introduced the same image corpus to train my model, and the resulting accuracy was to be expected:
  
 <p align="center">
- <img src="/eda_plots/base_model_train.png" alt="drawing" width="450"/>
+ <img src="/eda_plots/base_model_train.png" alt="drawing" width="600"/>
 </p>
  
 The model struggled to converge, and the accuracy rarely acheived a value greater than random. 
@@ -152,11 +156,10 @@ The model struggled to converge, and the accuracy rarely acheived a value greate
   <img src="/eda_plots/layer_5_activations.PNG" alt="drawing" width="1000"/>
 </p>
 
-The above images are a sampling of the outputs from activation layers 2 and 5 for a tudor-style home, in Xception and my baseline model. It is now clear why my model struggled mightly to distinguish between any of the features of the houses. Why exactly are the majority of the images in the baseline model completely blacked out? It has to do with the activation function specified in the neural networks. Generally, activation functions are how we introduce non-linearity to the model. Activation functions take the input from the convolution step, and adjust the outputs according to the specified function. ReLu activation is very common in CNNs, and is what I employed in my model. Below is 
-
+The above images are a sampling of the outputs from activation layers 2 and 5 for a tudor-style home, in Xception and my baseline model. It is now clear why my model struggled mightly to distinguish between any of the features of the houses. Why exactly are the majority of the images in the baseline model completely blacked out? It has to do with the activation function specified in the neural networks. Generally, activation functions are how we introduce non-linearity to the model. Activation functions take the input from the convolution step, and adjust the outputs according to the specified function. Rectified Linear Unit (ReLu) activation is very common in CNNs, and is what I employed in my model. Below is a visual representaion of ReLu. 
 
 <p align="center">
   <img src="/eda_plots/relu.png" alt="drawing" width="400"/>
 </p>
 
- 
+So any value that is negative, or does not contribute positively to feature determination, gets zero'd out. This zeroing out explains the blacked out images in my model above.  
