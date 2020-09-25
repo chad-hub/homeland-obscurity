@@ -168,7 +168,7 @@ So any value that is negative, or does not contribute positively to feature dete
 It is entirely feasible to use CNNs to classify home architecture styles. The most successful method is to employ transfer-learning with minor fine tuning. I also suggest that thousands more images would benefit the accuracy of the model. Another procedure that would increase accuracy is to include bounding boxes in the images. Bounding boxes, as shown below, tell the model exactly where to look for when training, and what we want the model to focus on for classification. 
 
 <p align="center">
-  <img src="/bounding_box.PNG" alt="drawing" width="450"/>
+  <img src="/eda_plots/bounding_box.PNG" alt="drawing" width="450"/>
 </p>
 
 Bounding boxes eliminate any confusion caused by trees, grass, or shrubbery surrounding the home.  
