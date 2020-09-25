@@ -71,11 +71,22 @@ The true power of CNNs are most evident when we employ transfer-learning. With t
   <img src="/eda_plots/ final_xception_pre_ft" alt="drawing" width="300"/>
 </p>
 
-In 10 epochs, allowing no adjustment to the weights in all of the built in layers of Xception, the validation accuracy approached 80% accuracy, an extremely impressive result. The next step was to begin unfreezing some of the layers in Xception to allow the model to adjust it's parameters to better classify the categories required. I also adjusted the learning rate, which controls how aggresively the model is allowed to adjust the pre-trained components of the model. In general, smaller learning rates are recommended when fine tuning a transfer learning model to fight over-fitting.  
+In 10 epochs, allowing no adjustment to the weights in all of the built in layers of Xception, the validation accuracy approached 80% accuracy, an extremely impressive result. The next step was to begin unfreezing some of the layers in Xception to allow the model to adjust it's parameters to better classify the categories required. I also adjusted the learning rate, which controls how aggresively the model is allowed to adjust the pre-trained components of the model. In general, smaller learning rates are recommended when fine tuning a transfer learning model to fight over-fitting. Below are the same plots, but I've added a line indicating when I allowed the model to unfreeze layers and begin adjusting the pre-trained Xception weights. 
+
+| Learning Rate 0.00001 | Learning Rate 0.0001 |
+| ----------------------|----------------------|
+| ![lr_0.00001](eda_plots/fine_tuning_lr_0.00001.png) | ![lr_0.0001](eda_plots/fine_tuning_lr_0.0001.png) |
+
+| Learning Rate 0.001 | Learning Rate 0.01 |
+| ----------------------|----------------------|
+| ![lr_0.001](eda_plots/fine_tuning_lr_0.001.png) | ![lr_0.01](eda_plots/fine_tuning_lr_0.01.png) |
+
+
+There are some signs of over-fitting / confusion with the learning rate going down to 0.01. For this reason I opted to keep the learning rate at 0.001 - yielding the best results. 
 
 ## Transfer Learning Results
  
  <p align="center">
-  <img src="/eda_plots/final_Xception_conf_M.png" alt="drawing" width="300"/>
+  <img src="/eda_plots/final_Xception_conf_M.png" alt="drawing" width="600"/>
 </p>
  
