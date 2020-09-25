@@ -130,4 +130,16 @@ There are some signs of over-fitting / confusion with the learning rate going do
  <img src="/eda_plots/base_model_train.png" alt="drawing" width="450"/>
 </p>
  
+ The model struggled to converge, and the accuracy rarely acheived a value greater than random. 
+ 
+ 
+ ## Results
+ 
+ <p align="center">
+  <img src="/eda_plots/baseline_results.PNG" alt="drawing" width="600"/>
+</p>
+ 
+ Note that the model predicted modern homes for all the validation set. Exploring the 
+
+ 
  
