@@ -103,13 +103,13 @@ There are some signs of over-fitting / confusion with the learning rate going do
 
 ## Transfer Learning Results
  
- <p align="center">
+<p align="center">
   <img src="/eda_plots/final_Xception_conf_M.png" alt="drawing" width="600"/>
 </p>
  
  A perfect confusion matrix would have all solid dark blue along the diagonal, so the model is performing exceptionally well. The best accuracy I was able to acheive was 84%.
  
-  <p align="center">
+ <p align="center">
   <img src="/eda_plots/xception_pred_victorian.png" alt="drawing" width="300" height="300"/>
   <img src="/eda_plots/xception_pred_tudor.png" alt="drawing" width="300" height="300"/>
 </p>
@@ -118,8 +118,16 @@ There are some signs of over-fitting / confusion with the learning rate going do
  
  I knew full well that acheiving anything close to the success of transfer-learning would be nearly impossible in the scope of this assignment. However, my goal in this project is to peek into the black box and understand what an excellent model reveals in the images and what a basic model from scratch would reveal. The basic structure of my base CNN is as follows:
  
-  <p align="center">
-  <img src="/eda_plots/baseline_cnn.PNG" alt="drawing" width="800"/>
+<p align="center">
+ <img src="/eda_plots/baseline_cnn.PNG" alt="drawing" width="800"/>
+</p>
+ 
+ ## Training
+ 
+ I introduced the same image corpus to train my model, and the resulting accuracy was to be expected:
+ 
+<p align="center">
+ <img src="/eda_plots/base_model_train.png" alt="drawing" width="450"/>
 </p>
  
  
