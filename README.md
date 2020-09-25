@@ -33,7 +33,6 @@ Convolutional Neural Networks (CNNs) are especially good at processing images an
   <img src="eda_plots/modern.PNG" alt="drawing" width="300" height="310"/>
   <img src="eda_plots/victorian.PNG" alt="drawing" width="300" height="300"/>
 </p>
-
 <p align="center">
   <img src="eda_plots/ranch.png" alt="drawing" width="300" height="340"/>
   <img src="eda_plots/cap_cod.PNG" alt="drawing" width="300" height="300"/>
