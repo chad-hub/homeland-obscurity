@@ -131,7 +131,7 @@ I knew full well that acheiving anything close to the success of transfer-learni
 I introduced the same image corpus to train my model, and the resulting accuracy was to be expected:
  
 <p align="center">
- <img src="/eda_plots/base_model_train.png" alt="drawing" width="2000" height="1000"/>
+ <img src="/eda_plots/base_model_train.png" alt="drawing" width="2000" height="500"/>
 </p>
  
 The model struggled to converge, and the accuracy rarely acheived a value greater than random. 
