@@ -5,8 +5,8 @@ Using deep learning to classify home architecture
 ## Inspiration
 
 <p float="center">
-  <img src="/eda_plots/hagia_sophia.PNG" alt="drawing" width="400"/>
-  <img src="eda_plots/duomo.png" alt="drawing" width="400"/>
+  <img src="/eda_plots/hagia_sophia.PNG" alt="drawing" width="300"/>
+  <img src="eda_plots/duomo.png" alt="drawing" width="300"/>
 </p>
 
 Convolutional Neural Networks (CNNs) are especially good at processing images and featurizing their shapes, edges, curves, and depth. As I've learned more about CNNs and applied them throughout my work, I found myself wanting to look deeper at these networks while applying them to something I find personally interesting. Architecture is the perfect means with which to explore this deeper. I've been fortunate to have traveled many places all over the world and experienced a wide variety of cultures. While traveling, I was always drawn to the unique architectures associated with different cultures - and how they becuase the pride of each location. I chose to process images of different home architectural styles. My reasoning:
@@ -140,9 +140,17 @@ The model struggled to converge, and the accuracy rarely acheived a value greate
 </p>
 <p align="center">
   <img src="/eda_plots/baseline_predict_tudor.png" alt="drawing" width="300"/>
+  <img src="/eda_plots/baseline_predict_modern.png" alt="drawing" width="300"/>
 </p>
  
- Note that the model predicted modern homes for all the validation set classes. all of these predictions were made with very low probability, just above 1/5 as expected based on the confusion matrix and model accuracy. 
+ Note that the model predicted modern homes for all the validation set classes. All of these predictions were made with very low probability, just above 1/5 as expected based on the confusion matrix and model accuracy. In observing the images, it's understandable why the baseline model mostly strongly captured the modern style home features. Most of the modern home images were clear of any trees or shrubbery around the home obscuring the image. Modern homes are the clearest photos, with prominent horizontal and vertical lines. Becuase every other home features these same lines somewhere on the house, the misclassification makes sense.
+ 
+ ## Peek in the Black Box
+ 
+<p float="center">
+  <img src="/eda_plots/layer_2_activations.PNG" alt="drawing" width="800"/>
+  <img src="/eda_plots/layer_5_activations.PNG" alt="drawing" width="800"/>
+</p>
 
  
  
